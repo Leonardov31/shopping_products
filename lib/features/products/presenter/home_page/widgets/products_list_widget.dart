@@ -9,9 +9,11 @@ class ProductsListWidget extends StatelessWidget {
   const ProductsListWidget({
     Key? key,
     required this.products,
+    this.isTest = false,
   }) : super(key: key);
 
   final List<ProductEntity>? products;
+  final bool isTest;
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +28,21 @@ class ProductsListWidget extends StatelessWidget {
                 height: 100,
                 child: Row(
                   children: [
-                    Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Image(
-                        fit: BoxFit.fitWidth,
-                        width: 100,
-                        image: FirebaseImage(
-                          products![index].photoUrl,
-                          shouldCache: true,
+                    if (isTest == false)
+                      Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image(
+                          fit: BoxFit.fitWidth,
+                          width: 100,
+                          image: FirebaseImage(
+                            products![index].photoUrl,
+                            shouldCache: true,
+                          ),
                         ),
                       ),
-                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
@@ -108,11 +111,11 @@ class ProductsListWidget extends StatelessWidget {
                   },
                   itemBuilder: (BuildContext context) {
                     return [
-                      const PopupMenuItem(
+                      const PopupMenuItem<int>(
                         value: 0,
                         child: Text('Editar'),
                       ),
-                      const PopupMenuItem(
+                      const PopupMenuItem<int>(
                         value: 1,
                         child: Text('Deletar'),
                       ),

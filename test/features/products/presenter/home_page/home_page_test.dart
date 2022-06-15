@@ -1,43 +1,38 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:shopping_products/features/products/domain/entities/product_entity.dart';
+import 'package:shopping_products/features/products/domain/usecases/delete_product_usecase.dart';
 import 'package:shopping_products/features/products/domain/usecases/get_all_products_usecase.dart';
+import 'package:shopping_products/features/products/presenter/home_page/controllers/delete_product_controller.dart';
 import 'package:shopping_products/features/products/presenter/home_page/home_page.dart';
+import 'package:shopping_products/features/products/presenter/home_page/widgets/products_list_widget.dart';
+import 'package:shopping_products/service_locator.dart';
 
+import '../../../../helper/mock_producst_list.dart';
 import '../../../../helper/start_basic_app.dart';
 import 'home_page_test.mocks.dart';
 
-@GenerateMocks([GetAllProductsUsecaseImpl])
+@GenerateMocks([IGetAllProductsUsecase, IDeleteProductUsecase, FirebaseImage])
 void main() {
   startBasicAppTest();
 
-  late final IGetAllProductsUsecase mockGetProducts;
+  final mockGetProducts = MockIGetAllProductsUsecase();
+  final mockDeleteProduct = MockIDeleteProductUsecase();
 
   setUp(() {
-    mockGetProducts = MockGetAllProductsUsecaseImpl();
     GetIt.instance.registerFactory<IGetAllProductsUsecase>(
       () => mockGetProducts,
     );
+    GetIt.instance.registerFactory<IDeleteProductUsecase>(
+      () => mockDeleteProduct,
+    );
   });
 
-  final List<ProductEntity> tProducts = [
-    ProductEntity(
-      description: 'Raw organic brown eggs in a basket',
-      id: 0,
-      title: 'Brown eggs',
-      type: 'dairy',
-      rating: 4,
-      price: 28.4,
-      photoUrl: 'gs://shopping-products-f39f5.appspot.com/0.jpg',
-      createdAt: DateTime.parse("2022-06-13 15:38:30.655559"),
-    ),
-  ];
-
-  testWidgets('Testing if ListView shows up', (tester) async {
+  testWidgets('Should show list of products', (tester) async {
     when(mockGetProducts.call()).thenAnswer(
       (_) async => Right(tProducts),
     );
@@ -47,6 +42,43 @@ void main() {
     ));
 
     expect(find.byType(ListView), findsOneWidget);
+    expect(find.byType(ProductsListWidget), findsOneWidget);
+
     verify(mockGetProducts.call()).called(1);
   });
+
+  testWidgets('Should delete first product from list', (tester) async {
+    when(mockDeleteProduct.call(0)).thenAnswer((_) async {
+      tProducts.removeAt(0);
+      return const Right(unit);
+    });
+
+    await tester.pumpWidget(const _BuildProductList());
+
+    expect(find.text('Brown eggs'), findsOneWidget);
+    expect(find.text('Sweet fresh stawberry'), findsOneWidget);
+
+    getIt<DeleteProductController>().deleteProduct(0);
+    await tester.pumpWidget(const _BuildProductList());
+
+    expect(find.text('Brown eggs'), findsNothing);
+    expect(find.text('Sweet fresh stawberry'), findsOneWidget);
+
+    verify(mockDeleteProduct.call(0)).called(1);
+  });
+}
+
+class _BuildProductList extends StatelessWidget {
+  const _BuildProductList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: ProductsListWidget(products: tProducts, isTest: true),
+      ),
+    );
+  }
 }

@@ -41,7 +41,13 @@ class _HomePageState extends State<HomePage> {
           }
 
           if (products != null) {
-            return ProductsListWidget(products: products);
+            if (products != []) {
+              return ProductsListWidget(products: products);
+            }
+
+            return const Center(
+              child: Text('The product list is empty'),
+            );
           }
 
           return Container();
