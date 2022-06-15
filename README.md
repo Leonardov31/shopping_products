@@ -1,16 +1,24 @@
 # shopping_products
 
-A new Flutter project.
+An app to list products from realtime database with the option to edit and delete the products. using clean architecture.
+
+# Demo
+![Demo](demo.gif)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+**Note:** Make sure your Flutter environment is [setup](https://flutter.io/getting-started/).
 
-A few resources to get you started if this is your first Flutter project:
+## Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+In the command terminal, run the following commands:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    $ git clone https://github.com/Leonardov31/shopping_products.git
+    $ cd shopping_products/
+
+## Setup Flutter Firebase integration
+Check out the [documentation]('https://firebase.google.com/docs/flutter/setup?platform=android') to setup Flutter Firebase integration.
+
+ Start your Flutter project by running the command:
+    
+    $ flutter run
