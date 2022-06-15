@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1
   equatable: ^2.0.3
+  firebase_database: ^9.0.15
+  firebase_core: ^1.17.1
 
 dev_dependencies:
   flutter_test:
