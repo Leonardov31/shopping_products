@@ -21,7 +21,7 @@ Check out the [documentation]('https://firebase.google.com/docs/flutter/setup?pl
 
 #### Reatime Database data example:
 Import the [Json data](data.json) into the firebase realtime database and replace the 'filename' whith your firebase storage path referencing the images.
-Exemplo:
+Example:
     
     filename: "gs://shopping-products-f39f5.appspot.com/0.jpg"
 
