@@ -19,6 +19,12 @@ In the command terminal, run the following commands:
 ## Setup Flutter Firebase integration
 Check out the [documentation]('https://firebase.google.com/docs/flutter/setup?platform=android') to setup Flutter Firebase integration.
 
- Start your Flutter project by running the command:
+#### Reatime Database data example:
+Import the [Json data](data.json) into the firebase realtime database and replace the 'filename' whith your firebase storage path referencing the images.
+Exemplo:
+    
+    filename: "gs://shopping-products-f39f5.appspot.com/0.jpg"
+
+## Start your Flutter project by running the command:
     
     $ flutter run
