@@ -35,22 +35,14 @@ class _HomePageState extends State<HomePage> {
           value.fold((l) => error = l, (r) => products = r);
 
           if (error != null) {
-            return Center(
-              child: Text("${error?.message}"),
-            );
+            return Center(child: Text("${error?.message}"));
           }
 
-          if (products != null) {
-            if (products != []) {
-              return ProductsListWidget(products: products);
-            }
-
-            return const Center(
-              child: Text('The product list is empty'),
-            );
+          if (products != null && products != []) {
+            return ProductsListWidget(products: products);
           }
 
-          return Container();
+          return const Center(child: Text('The product list is empty'));
         },
       ),
     );

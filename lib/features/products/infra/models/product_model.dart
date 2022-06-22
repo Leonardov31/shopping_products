@@ -32,7 +32,7 @@ class ProductModel extends ProductEntity {
       description: map['description'],
       type: map['type'] as String,
       rating: map['rating'] as int,
-      price: map['price'] as double,
+      price: map['price'].toDouble(),
       photoUrl: map['filename'] as String,
       createdAt: DateTime.parse(map['createdAt']),
     );

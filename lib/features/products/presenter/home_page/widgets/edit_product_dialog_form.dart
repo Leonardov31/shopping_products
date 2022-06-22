@@ -1,4 +1,6 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_products/core/helpers/price_format.dart';
 import 'package:shopping_products/features/products/domain/entities/product_entity.dart';
 import 'package:shopping_products/features/products/infra/models/product_model.dart';
 import 'package:shopping_products/features/products/presenter/home_page/controllers/edit_product_controller.dart';
@@ -26,6 +28,8 @@ class ProductForm extends StatefulWidget {
 }
 
 class _ProductFormState extends State<ProductForm> {
+  final _formKey = GlobalKey<FormState>();
+
   late final TextEditingController titleTextController;
   late final TextEditingController typeTextController;
   late final TextEditingController priceTextController;
@@ -36,8 +40,8 @@ class _ProductFormState extends State<ProductForm> {
   void initState() {
     titleTextController = TextEditingController(text: widget.product.title);
     typeTextController = TextEditingController(text: widget.product.type);
-    priceTextController =
-        TextEditingController(text: widget.product.price.toStringAsFixed(2));
+    priceTextController = TextEditingController(
+        text: PriceFormat.formatToString(widget.product.price));
     super.initState();
   }
 
@@ -55,6 +59,7 @@ class _ProductFormState extends State<ProductForm> {
       title: const Text('Edit product'),
       content: SingleChildScrollView(
         child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
@@ -65,6 +70,7 @@ class _ProductFormState extends State<ProductForm> {
                 decoration: const InputDecoration(
                   label: Text('Title'),
                 ),
+                validator: defaultFormValidator,
               ),
               TextFormField(
                 controller: typeTextController,
@@ -72,33 +78,30 @@ class _ProductFormState extends State<ProductForm> {
                 decoration: const InputDecoration(
                   label: Text('Type'),
                 ),
+                validator: defaultFormValidator,
               ),
               TextFormField(
                 controller: priceTextController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  CurrencyTextInputFormatter(
+                    decimalDigits: 2,
+                    locale: 'br',
+                    symbol: '',
+                  )
+                ],
                 decoration: const InputDecoration(
                   label: Text('Price'),
+                  prefix: Text('R\$ '),
                 ),
+                validator: defaultFormValidator,
               ),
               const SizedBox(height: 10),
               AnimatedBuilder(
                 animation: controller.isLoading,
                 builder: (context, _) {
                   return ElevatedButton(
-                    onPressed: () async {
-                      var updatedProduct =
-                          ProductModel.fromEntity(widget.product);
-
-                      updatedProduct = updatedProduct.copyWith(
-                        title: titleTextController.text.trim(),
-                        type: typeTextController.text.trim(),
-                        price: double.parse(priceTextController.text),
-                      );
-
-                      controller
-                          .editProduct(updatedProduct)
-                          .then((value) => Navigator.pop(context));
-                    },
+                    onPressed: () async => onSave(context),
                     child: !controller.isLoading.value
                         ? const Text('Save')
                         : const LinearProgressIndicator(),
@@ -110,5 +113,29 @@ class _ProductFormState extends State<ProductForm> {
         ),
       ),
     );
+  }
+
+  void onSave(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      var updatedProduct = ProductModel.fromEntity(widget.product);
+
+      updatedProduct = updatedProduct.copyWith(
+        title: titleTextController.text.trim(),
+        type: typeTextController.text.trim(),
+        price: PriceFormat.toDouble(priceTextController.text),
+      );
+
+      controller
+          .editProduct(updatedProduct)
+          .then((value) => Navigator.pop(context));
+    }
+  }
+
+  String? defaultFormValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'The field can\'t be empty!';
+    }
+
+    return null;
   }
 }
