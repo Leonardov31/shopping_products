@@ -1,6 +1,7 @@
 import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shopping_products/core/helpers/price_format.dart';
 import 'package:shopping_products/features/products/domain/entities/product_entity.dart';
 import 'package:shopping_products/features/products/presenter/home_page/widgets/delete_product_dialog.dart';
 import 'package:shopping_products/features/products/presenter/home_page/widgets/edit_product_dialog_form.dart';
@@ -77,7 +78,7 @@ class ProductsListWidget extends StatelessWidget {
                                 itemSize: 16.0,
                               ),
                               Text(
-                                'R\$ ${products?[index].price.toStringAsFixed(2)}',
+                                'R\$ ${PriceFormat.formatToString(products?[index].price ?? 0)}',
                                 style: Theme.of(context).textTheme.subtitle1,
                               ),
                             ],
