@@ -38,6 +38,21 @@ class ProductsListWidget extends StatelessWidget {
                         child: Image(
                           fit: BoxFit.fitWidth,
                           width: 100,
+                          frameBuilder: (BuildContext context, Widget child,
+                              int? frame, bool wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded) {
+                              return child;
+                            }
+                            return AnimatedOpacity(
+                              opacity: frame == null ? 0 : 1,
+                              duration: const Duration(seconds: 1),
+                              curve: Curves.easeOut,
+                              child: child,
+                            );
+                          },
+                          errorBuilder: (context, _, __) {
+                            return Image.asset('assets/placeholder.png');
+                          },
                           image: FirebaseImage(
                             products![index].photoUrl,
                             shouldCache: true,
